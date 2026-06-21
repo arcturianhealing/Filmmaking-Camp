@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Film Camp — Where Kids Become Filmmakers</title>
+<meta name="description" content="Hands-on filmmaking camps and weekend classes for kids ages 7–14 in Austin, Los Angeles, and San Francisco." />
+
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Fonts from fontsource -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5.0.8/index.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/playfair-display@5.0.12/index.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@5.0.6/index.css" />
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Inter', 'system-ui', 'sans-serif'],
+          display: ['"Playfair Display"', 'serif'],
+          mono: ['"JetBrains Mono"', 'monospace']
+        },
+        colors: {
+          ink: '#0b0b0c',
+          bone: '#f5f1ea',
+          amber: '#e0a44a',
+          wine: '#7a1f2b'
+        }
+      }
+    }
+  }
+</script>
+
+<style>
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: #f5f1ea;
+    color: #0b0b0c;
+    -webkit-font-smoothing: antialiased;
+  }
+  .font-display { font-family: 'Playfair Display', serif; }
+  .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* Hero image grain overlay */
+  .grain::after {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
+    mix-blend-mode: overlay;
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  /* Marquee */
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  .marquee-track { animation: marquee 35s linear infinite; }
+
+  /* Fade-in on scroll */
+  .reveal { opacity: 0; transform: translateY(24px); transition: all .9s cubic-bezier(.2,.8,.2,1); }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  /* Link underline */
+  .link-u {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    transition: background-size .4s ease;
+  }
+  .link-u:hover { background-size: 100% 1px; }
+
+  /* Card hover */
+  .card-hover { transition: transform .5s cubic-bezier(.2,.8,.2,1), box-shadow .5s ease; }
+  .card-hover:hover { transform: translateY(-6px); box-shadow: 0 24px 60px -20px rgba(0,0,0,.25); }
+
+  /* Article prose */
+  .prose h2 { font-family: 'Playfair Display', serif; font-size: 2rem; line-height: 1.15; margin-top: 2.5rem; margin-bottom: 1rem; }
+  .prose h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-top: 2rem; margin-bottom: .75rem; }
+  .prose p  { margin-bottom: 1rem; line-height: 1.75; color: #2a2a2c; }
+  .prose ul { margin: 1rem 0 1.5rem 1.25rem; list-style: none; }
+  .prose ul li { position: relative; padding-left: 1.5rem; margin-bottom: .4rem; line-height: 1.6; }
+  .prose ul li::before { content: '▸'; position: absolute; left: 0; color: #e0a44a; }
+  .prose strong { color: #0b0b0c; }
+
+  /* Custom scroll */
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: #f5f1ea; }
+  ::-webkit-scrollbar-thumb { background: #0b0b0c; border-radius: 4px; }
+
+  /* Map card */
+  .map-card iframe { width: 100%; height: 280px; border: 0; filter: grayscale(30%) contrast(1.05); }
+
+  /* Ticker dot */
+  .pulse {
+    width: 8px; height: 8px; border-radius: 999px; background: #7a1f2b;
+    box-shadow: 0 0 0 0 rgba(122,31,43,.7);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(122,31,43,.7); }
+    70% { box-shadow: 0 0 0 12px rgba(122,31,43,0); }
+    100% { box-shadow: 0 0 0 0 rgba(122,31,43,0); }
+  }
+
+  /* Gallery image tilt */
+  .tilt { transition: transform .7s cubic-bezier(.2,.8,.2,1); }
+  .tilt:hover { transform: rotate(-1.2deg) scale(1.02); }
+</style>
+</head>
+<body class="bg-bone text-ink">
+
+<!-- ============ NAV ============ -->
+<header class="fixed top-0 inset-x-0 z-50 backdrop-blur-md bg-bone/70 border-b border-ink/10">
+  <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+    <a href="#top" class="flex items-center gap-2">
+      <div class="w-8 h-8 bg-ink text-bone grid place-items-center font-display text-lg">F</div>
+      <span class="font-display text-xl tracking-tight">Film Camp</span>
+    </a>
+    <div class="hidden md:flex items-center gap-7 text-sm">
+      <a href="#programs" class="link-u">Programs</a>
+      <a href="#locations" class="link-u">Locations</a>
+      <a href="#article" class="link-u">Journal</a>
+      <a href="#gallery" class="link-u">Gallery</a>
+      <a href="#contact" class="link-u">Contact</a>
+    </div>
+    <a href="https://film.camp/enrollment" target="_blank" class="bg-ink text-bone px-4 py-2 text-xs tracking-widest uppercase hover:bg-wine transition-colors">Enroll</a>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section id="top" class="relative pt-28 pb-20 md:pt-40 md:pb-32 overflow-hidden">
+  <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-12 gap-10 items-end">
+    <div class="md:col-span-7 reveal">
+      <div class="flex items-center gap-2 mb-6 font-mono text-xs uppercase tracking-[0.3em] text-ink/60">
+        <span class="pulse"></span>
+        <span>Now Enrolling · Summer 2026</span>
+      </div>
+      <h1 class="font-display text-5xl md:text-7xl lg:text-8xl leading-[0.95] tracking-tight">
+        Lights. Camera.
+        <span class="italic text-wine">Confidence.</span>
+      </h1>
+      <p class="mt-8 text-lg md:text-xl max-w-xl text-ink/70 leading-relaxed">
+        Hands-on filmmaking camps and weekend classes for kids ages 7–14 in
+        <a href="https://film.camp/film-classes/austin" class="link-u font-medium">Austin</a>,
+        <a href="https://film.camp/film-classes/los-angeles" class="link-u font-medium">Los Angeles</a>, and
+        <a href="https://film.camp/film-classes/san-francisco" class="link-u font-medium">San Francisco</a>.
+        Every child writes, directs, acts, shoots, and edits their own short film.
+      </p>
+      <div class="mt-10 flex flex-wrap gap-4">
+        <a href="#programs" class="bg-ink text-bone px-7 py-4 text-xs uppercase tracking-[0.2em] hover:bg-wine transition-colors">Explore Programs</a>
+        <a href="https://film.camp/showcase" target="_blank" class="border border-ink px-7 py-4 text-xs uppercase tracking-[0.2em] hover:bg-ink hover:text-bone transition-colors">Watch Our Movies →</a>
+      </div>
+
+      <div class="mt-14 grid grid-cols-3 gap-6 max-w-md">
+        <div>
+          <div class="font-display text-4xl">3</div>
+          <div class="text-xs uppercase tracking-widest text-ink/50 mt-1">Cities</div>
+        </div>
+        <div>
+          <div class="font-display text-4xl">12</div>
+          <div class="text-xs uppercase tracking-widest text-ink/50 mt-1">Max per week</div>
+        </div>
+        <div>
+          <div class="font-display text-4xl">7–14</div>
+          <div class="text-xs uppercase tracking-widest text-ink/50 mt-1">Ages</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="md:col-span-5 reveal">
+      <div class="relative aspect-[4/5] grain overflow-hidden">
+        <img src="https://image.qwenlm.ai/public_source/50c7c07b-c225-4bc3-94b5-f0fc2e749931/1701b7ff0-807b-4a2d-abe0-a7add9385796.png" alt="Young filmmakers on set" class="w-full h-full object-cover" />
+        <div class="absolute top-4 left-4 font-mono text-[10px] uppercase tracking-widest text-bone/90 bg-ink/60 backdrop-blur px-3 py-1.5">
+          REEL · 01 / 24
+        </div>
+        <div class="absolute bottom-4 right-4 font-mono text-[10px] uppercase tracking-widest text-bone/90">
+          35mm · f/2.8
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MARQUEE ============ -->
+<section class="border-y border-ink/15 bg-ink text-bone overflow-hidden py-5">
+  <div class="flex marquee-track whitespace-nowrap font-display text-3xl md:text-5xl">
+    <div class="flex shrink-0 items-center gap-10 px-5">
+      <span>Write</span><span class="text-amber">✦</span>
+      <span class="italic">Direct</span><span class="text-amber">✦</span>
+      <span>Act</span><span class="text-amber">✦</span>
+      <span class="italic">Shoot</span><span class="text-amber">✦</span>
+      <span>Edit</span><span class="text-amber">✦</span>
+      <span class="italic">Premiere</span><span class="text-amber">✦</span>
+    </div>
+    <div class="flex shrink-0 items-center gap-10 px-5">
+      <span>Write</span><span class="text-amber">✦</span>
+      <span class="italic">Direct</span><span class="text-amber">✦</span>
+      <span>Act</span><span class="text-amber">✦</span>
+      <span class="italic">Shoot</span><span class="text-amber">✦</span>
+      <span>Edit</span><span class="text-amber">✦</span>
+      <span class="italic">Premiere</span><span class="text-amber">✦</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ INTRO ============ -->
+<section class="py-24 md:py-32">
+  <div class="max-w-5xl mx-auto px-6 grid md:grid-cols-12 gap-10">
+    <div class="md:col-span-4 reveal">
+      <div class="font-mono text-xs uppercase tracking-[0.3em] text-ink/50 mb-4">§ 01 — About</div>
+      <h2 class="font-display text-4xl leading-tight">A film school,<br/>disguised as<br/>play.</h2>
+    </div>
+    <div class="md:col-span-8 reveal">
+      <p class="text-xl md:text-2xl leading-relaxed text-ink/80">
+        Film Camp is a creative education company where kids ages 7–14 learn filmmaking by actually making films. From
+        <a href="https://film.camp/film-classes/austin" class="link-u">weekend classes in Austin</a>
+        to
+        <a href="https://film.camp/summer-camps-los-angeles" class="link-u">Hollywood-inspired summer camps in LA</a>
+        and
+        <a href="https://film.camp/summer-camps-san-francisco" class="link-u">innovation-driven sessions in San Francisco</a>
+        — every camper walks away with a finished short film, a red-carpet premiere, and a whole lot of confidence.
+      </p>
+      <div class="mt-10 grid sm:grid-cols-3 gap-6">
+        <div class="border-t border-ink/20 pt-4">
+          <div class="font-display text-3xl mb-2">100%</div>
+          <p class="text-sm text-ink/60">Hands-on. Every camper directs, acts, shoots, and edits.</p>
+        </div>
+        <div class="border-t border-ink/20 pt-4">
+          <div class="font-display text-3xl mb-2">0</div>
+          <p class="text-sm text-ink/60">Experience needed. All gear provided, all levels welcome.</p>
+        </div>
+        <div class="border-t border-ink/20 pt-4">
+          <div class="font-display text-3xl mb-2">1</div>
+          <p class="text-sm text-ink/60">Finished film per camper — premiered to family on Friday.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROGRAMS ============ -->
+<section id="programs" class="py-24 md:py-32 bg-ink text-bone">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16 reveal">
+      <div>
+        <div class="font-mono text-xs uppercase tracking-[0.3em] text-bone/50 mb-4">§ 02 — Programs</div>
+        <h2 class="font-display text-5xl md:text-6xl leading-[0.95]">Pick your<br/>production.</h2>
+      </div>
+      <p class="max-w-md text-bone/70 leading-relaxed">
+        Weekend classes during the school year. Immersive summer camps. Holiday break intensives. Whatever the season, there's a script waiting to be written.
+      </p>
+    </div>
+
+    <!-- Weekend Film Classes -->
+    <div class="mb-16 reveal">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="w-10 h-px bg-amber"></span>
+        <h3 class="font-mono text-xs uppercase tracking-[0.3em] text-amber">Weekend Film Classes</h3>
+      </div>
+      <div class="grid md:grid-cols-3 gap-5">
+        <a href="https://film.camp/film-classes/austin" target="_blank" class="card-hover group block border border-bone/15 p-8 hover:border-amber">
+          <div class="font-mono text-[10px] uppercase tracking-widest text-bone/40 mb-6">TX · Saturdays</div>
+          <h4 class="font-display text-3xl mb-3 group-hover:text-amber transition-colors">Austin<br/>Film Classes</h4>
+          <p class="text-sm text-bone/60 leading-relaxed mb-6">10-week Saturday program at Photogroup Studios. Storytelling, cinematography, acting & editing.</p>
+          <div class="flex items-center justify-between text-xs uppercase tracking-widest border-t border-bone/15 pt-4">
+            <span>Ages 7–14</span>
+            <span class="group-hover:translate-x-1 transition-transform">→</span>
+          </div>
+        </a>
+
+        <a href="https://film.camp/film-classes/los-angeles" target="_blank" class="card-hover group block border border-bone/15 p-8 hover:border-amber">
+          <div class="font-mono text-[10px] uppercase tracking-widest text-bone/40 mb-6">CA · Sundays</div>
+          <h4 class="font-display text-3xl mb-3 group-hover:text-amber transition-colors">Los Angeles<br/>Film Classes</h4>
+          <p class="text-sm text-bone/60 leading-relaxed mb-6">Sunday mornings at Solar Studios, Glendale. Guest instructors from Hollywood every week.</p>
+          <div class="flex items-center justify-between text-xs uppercase tracking-widest border-t border-bone/15 pt-4">
+            <span>Ages 8–14</span>
+            <span class="group-hover:translate-x-1 transition-transform">→</span>
+          </div>
+        </a>
+
+        <a href="https://film.camp/film-classes/san-francisco" target="_blank" class="card-hover group block border border-bone/15 p-8 hover:border-amber">
+          <div class="font-mono text-[10px] uppercase tracking-widest text-bone/40 mb-6">CA · Saturdays</div>
+          <h4 class="font-display text-3xl mb-3 group-hover:text-amber transition-colors">San Francisco<br/>Film Classes</h4>
+          <p class="text-sm text-bone/60 leading-relaxed mb-6">10-week Saturday program at Young Performers Theater, Marina District. Red-carpet premiere in December.</p>
+          <div class="flex items-center justify-between text-xs uppercase tracking-widest border-t border-bone/15 pt-4">
+            <span>Ages 8–14</span>
+            <span class="group-hover:translate-x-1 transition-transform">→</span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Summer Camps -->
+    <div class="mb-16 reveal">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="w-10 h-px bg-amber"></span>
+        <h3 class="font-mono text-xs uppercase tracking-[0.3em] text-amber">Summer Camps</h3>
+      </div>
+      <div class="grid md:grid-cols-3 gap-5">
+        <a href="https://film.camp/summer-camps-austin" target="_blank" class="card-hover group block border border-bone/15 p-8 hover:border-amber">
+          <div class="font-mono text-[10px] uppercase tracking-widest text-bone/40 mb-6">June – July · $550</div>
+          <h4 class="font-display text-3xl mb-3 group-hover:text-amber transition-colors">Austin<br/>Summer Camp</h4>
+          <p class="text-sm text-bone/60 leading-relaxed mb-6">One-week immersion at Magellan International School. Green screen, SFX, full production.</p>
+          <div class="flex items-center justify-between text-xs uppercase tracking-widest border-t border-bone/15 pt-4">
+            <span>Ages 7–14 · 9am–4pm</span>
+            <span class="group-hover:translate-x-1 transition-transform">→</span>
+          </div>
+        </a>
+
+        <a href="https://film.camp/summer-camps-los-angeles" target="_blank" class="card-hover group block border border-bone/15 p-8 hover:border-amber">
+          <div class="font-mono text-[10px] uppercase tracking-widest text-bone/40 mb-6">June – July · $550</div>
+          <h4 class="font-display text-3xl mb-3 group-hover:text-amber transition-colors">Los Angeles<br/>Summer Camp</h4>
+          <p class="text-sm text-bone/60 leading-relaxed mb-6">Film inside Solar Studios — a working LA production space. Real gear. Real sets. Real premiere.</p>
+          <div class="flex items-center justify-between text-xs uppercase tracking-widest border-t border-bone/15 pt-4">
+            <span>Ages 7–14 · 9am–4pm</span>
+            <span class="group-hover:translate-x-1 transition-transform">→</span>
+          </div>
+        </a>
+
+        <a href="https://film.camp/summer-camps-san-francisco" target="_blank" class="card-hover group block border border-bone/15 p-8 hover:border-amber">
+          <div class="font-mono text-[10px] uppercase tracking-widest text-bone/40 mb-6">June – July · $550</div>
+          <h4 class="font-display text-3xl mb-3 group-hover:text-amber transition-colors">San Francisco<br/>Summer Camp</h4>
+          <p class="text-sm text-bone/60 leading-relaxed mb-6">Young Performers Theater in the Marina District. Only 12 spots per week — reserve early.</p>
+          <div class="flex items-center justify-between text-xs uppercase tracking-widest border-t border-bone/15 pt-4">
+            <span>Ages 7–14 · 9am–4pm</span>
+            <span class="group-hover:translate-x-1 transition-transform">→</span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Spring Break & Thanksgiving -->
+    <div class="reveal">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="w-10 h-px bg-amber"></span>
+        <h3 class="font-mono text-xs uppercase tracking-[0.3em] text-amber">Holiday Camps</h3>
+      </div>
+      <div class="grid md:grid-cols-4 gap-5">
+        <a href="https://film.camp/spring-break-camp-los-angeles" target="_blank" class="card-hover group block border border-bone/15 p-6 hover:border-amber">
+          <div class="font-mono text-[10px] uppercase tracking-widest text-bone/40 mb-4">Spring Break</div>
+          <h4 class="font-display text-xl mb-2 group-hover:text-amber transition-colors">LA Spring Break</h4>
+          <p class="text-xs text-bone/60 leading-relaxed">5-day camp at Solar Studios · March 30 – April 3</p>
+        </a>
+        <a href="https://film.camp/spring-break-camp-austin" target="_blank" class="card-hover group block border border-bone/15 p-6 hover:border-amber">
+          <div class="font-mono text-[10px] uppercase tracking-widest text-bone/40 mb-4">Spring Break</div>
+          <h4 class="font-display text-xl mb-2 group-hover:text-amber transition-colors">Austin Spring Break</h4>
+          <p class="text-xs text-bone/60 leading-relaxed">Holiday-week intensive for young filmmakers</p>
+        </a>
+        <a href="https://film.camp/thanksgiving-camp-austin" target="_blank" class="card-hover group block border border-bone/15 p-6 hover:border-amber">
+          <div class="font-mono text-[10px] uppercase tracking-widest text-bone/40 mb-4">Thanksgiving</div>
+          <h4 class="font-display text-xl mb-2 group-hover:text-amber transition-colors">Austin Thanksgiving</h4>
+          <p class="text-xs text-bone/60 leading-relaxed">Creative learning over school break</p>
+        </a>
+        <a href="https://film.camp/enrollment" target="_blank" class="card-hover group block border border-amber bg-amber/5 p-6">
+          <div class="font-mono text-[10px] uppercase tracking-widest text-amber mb-4">Enroll</div>
+          <h4 class="font-display text-xl mb-2">Reserve Your Spot</h4>
+          <p class="text-xs text-bone/60 leading-relaxed">Secure checkout via Stripe · Sibling discounts available</p>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LOCATIONS / MAPS ============ -->
+<section id="locations" class="py-24 md:py-32">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16 reveal">
+      <div>
+        <div class="font-mono text-xs uppercase tracking-[0.3em] text-ink/50 mb-4">§ 03 — Locations</div>
+        <h2 class="font-display text-5xl md:text-6xl leading-[0.95]">Three cities.<br/>One creative mission.</h2>
+      </div>
+      <p class="max-w-md text-ink/70 leading-relaxed">
+        Find your nearest studio, meet our instructors, and book a session. Every location is background-checked, climate-controlled, and equipped with professional production gear.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6">
+      <!-- AUSTIN -->
+      <div class="map-card card-hover border border-ink/15 bg-bone reveal">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3442.185173505312!2d-97.781025!3d30.3740993!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e94f7e2e2cbd941%3A0xc053482077f8eb1a!2sFilm%20Camp!5e0!3m2!1sen!2sbd!4v1780223246216!5m2!1sen!2sbd" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <div class="p-6">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="pulse"></span>
+            <span class="font-mono text-[10px] uppercase tracking-widest text-ink/50">Camp 01</span>
+          </div>
+          <h3 class="font-display text-2xl mb-1">Austin, Texas</h3>
+          <p class="text-sm text-ink/60 mb-5">Magellan International School · Photogroup Studios</p>
+          <a href="https://film.camp/spring-break-camp-austin" target="_blank" class="inline-flex items-center gap-2 bg-ink text-bone px-5 py-3 text-xs uppercase tracking-widest hover:bg-wine transition-colors">
+            Book Now <span>→</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- LOS ANGELES -->
+      <div class="map-card card-hover border border-ink/15 bg-bone reveal">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3302.7551259439288!2d-118.2587025!3d34.1270182!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x25285ebdbf27c9b7%3A0xa6a09394b694d9cf!2sFilm%20Camp!5e0!3m2!1sen!2sbd!4v1780223265193!5m2!1sen!2sbd" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <div class="p-6">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="pulse"></span>
+            <span class="font-mono text-[10px] uppercase tracking-widest text-ink/50">Camp 02</span>
+          </div>
+          <h3 class="font-display text-2xl mb-1">Los Angeles, California</h3>
+          <p class="text-sm text-ink/60 mb-5">Solar Studios · 3909 San Fernando Rd, Glendale</p>
+          <a href="https://film.camp/spring-break-camp-los-angeles" target="_blank" class="inline-flex items-center gap-2 bg-ink text-bone px-5 py-3 text-xs uppercase tracking-widest hover:bg-wine transition-colors">
+            Book Now <span>→</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- SAN FRANCISCO -->
+      <div class="map-card card-hover border border-ink/15 bg-bone reveal">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3152.287092336586!2d-122.4318139!3d37.80674390000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x473ae297aff407bd%3A0x3d1c591cb9a37501!2sFilm%20Camp!5e0!3m2!1sen!2sbd!4v1780223295243!5m2!1sen!2sbd" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <div class="p-6">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="pulse"></span>
+            <span class="font-mono text-[10px] uppercase tracking-widest text-ink/50">Camp 03</span>
+          </div>
+          <h3 class="font-display text-2xl mb-1">San Francisco, California</h3>
+          <p class="text-sm text-ink/60 mb-5">Young Performers Theater · Marina District</p>
+          <a href="https://film.camp/spring-break-camp-san-francisco" target="_blank" class="inline-flex items-center gap-2 bg-ink text-bone px-5 py-3 text-xs uppercase tracking-widest hover:bg-wine transition-colors">
+            Book Now <span>→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GALLERY ============ -->
+<section id="gallery" class="py-24 md:py-32 bg-ink text-bone">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16 reveal">
+      <div>
+        <div class="font-mono text-xs uppercase tracking-[0.3em] text-bone/50 mb-4">§ 04 — On Set</div>
+        <h2 class="font-display text-5xl md:text-6xl leading-[0.95]">Where stories<br/>come to life.</h2>
+      </div>
+      <p class="max-w-md text-bone/70 leading-relaxed">
+        From talk shows and music videos to sci-fi adventures and lighthearted comedies — every voice finds its place on screen.
+        <a href="https://film.camp/showcase" target="_blank" class="link-u font-medium">See the full showcase →</a>
+      </p>
+    </div>
+
+    <div class="grid grid-cols-12 gap-4">
+      <div class="col-span-12 md:col-span-7 tilt reveal">
+        <img src="https://cdn.prod.website-files.com/67d30a467f2b0899aa3d5ecc/67e7dd89888d584dc6e7c712_DRAMA-p-1080.avif" alt="Drama" class="w-full h-[420px] object-cover" />
+      </div>
+      <div class="col-span-12 md:col-span-5 tilt reveal">
+        <img src="https://cdn.prod.website-files.com/67d30a467f2b0899aa3d5ecc/67e7d4bddd2c9090c027f614_SCI-FI_JPEG-p-1080.avif" alt="Sci-Fi" class="w-full h-[420px] object-cover" />
+      </div>
+      <div class="col-span-12 md:col-span-4 tilt reveal">
+        <img src="https://cdn.prod.website-files.com/67d30a467f2b0899aa3d5ecc/67e7d5277974f8a933c56108_Untitled%20design%20(6)-p-1080.avif" alt="Production" class="w-full h-[340px] object-cover" />
+      </div>
+      <div class="col-span-12 md:col-span-8 tilt reveal">
+        <img src="https://cdn.prod.website-files.com/67d30a467f2b0899aa3d5ecc/67e7d7602378bc60f14faf7b_Copy%20of%20Copy%20of%20WORKOUTS-p-1080.avif" alt="On set" class="w-full h-[340px] object-cover" />
+      </div>
+      <div class="col-span-12 tilt reveal">
+        <img src="https://cdn.prod.website-files.com/67d30a467f2b0899aa3d5ecc/67e7d79210ab90a96900511e_Copy%20of%20WORKOUTS%20(1)-p-1080.avif" alt="Campers" class="w-full h-[420px] object-cover" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ARTICLE ============ -->
+<section id="article" class="py-24 md:py-32">
+  <div class="max-w-3xl mx-auto px-6">
+    <div class="reveal">
+      <div class="font-mono text-xs uppercase tracking-[0.3em] text-ink/50 mb-4">§ 05 — Journal · Parent's Guide</div>
+      <h2 class="font-display text-4xl md:text-6xl leading-[0.95] mb-6">
+        How Film Camp helps kids turn <span class="italic text-wine">creativity into confidence</span>.
+      </h2>
+      <div class="flex items-center gap-4 text-sm text-ink/50 mb-12 pb-8 border-b border-ink/15">
+        <span class="font-mono uppercase tracking-widest text-xs">Film Camp Editorial</span>
+        <span>·</span>
+        <span>18 min read</span>
+        <span>·</span>
+        <span>Education</span>
+      </div>
+    </div>
+
+    <article class="prose reveal">
+      <p class="text-xl md:text-2xl leading-relaxed text-ink/90 font-medium mb-8">
+        Children are naturally creative. They invent stories, imagine worlds, create characters, and constantly explore new ideas. Yet as they grow older, many lose opportunities to express that creativity in meaningful ways. Academic pressures, structured schedules, and increasing screen time can limit opportunities for imaginative exploration.
+      </p>
+
+      <p><strong>This is why creative education matters more than ever.</strong></p>
+
+      <p>Programs that encourage storytelling, collaboration, innovation, and self-expression help children develop skills that will benefit them throughout their lives. One of the most effective ways to nurture those abilities is through filmmaking.</p>
+
+      <p><a href="https://film.camp/">Film Camp</a> provides young creators with a unique environment where imagination meets action. Students don't just learn about movies — they learn how to make them. Through hands-on experiences, they discover how stories are written, filmed, edited, and shared while building confidence, communication skills, and leadership abilities.</p>
+
+      <p>Whether participating in <a href="#programs">Weekend Film Classes</a>, immersive <a href="#programs">Summer Camps</a>, or exciting <a href="#programs">Thanksgiving Camps</a>, students gain far more than filmmaking knowledge. They develop life skills. They build confidence. They discover their creative voice. And they create memories that last a lifetime.</p>
+
+      <h2>Why Filmmaking Is One of the Best Educational Activities for Kids</h2>
+      <p>Many extracurricular activities focus on a single skill. Sports emphasize athletic ability. Music focuses on performance. Academic tutoring strengthens classroom subjects. Filmmaking is different — it combines multiple disciplines into one engaging experience.</p>
+      <p>When students create films, they simultaneously learn:</p>
+      <ul>
+        <li>Storytelling</li>
+        <li>Writing</li>
+        <li>Communication</li>
+        <li>Leadership</li>
+        <li>Technology</li>
+        <li>Problem-solving</li>
+        <li>Collaboration</li>
+        <li>Creativity</li>
+        <li>Critical thinking</li>
+        <li>Project management</li>
+      </ul>
+      <p>This makes filmmaking one of the most comprehensive educational experiences available to young people today.</p>
+
+      <h2>The Importance of Storytelling in Child Development</h2>
+      <p>Stories help children make sense of the world. They teach empathy. They encourage imagination. They help young people understand perspectives different from their own.</p>
+      <p>Film Camp places storytelling at the center of the learning experience. Students learn how to develop characters, create narratives, structure scenes, build emotional connections, and communicate ideas visually.</p>
+
+      <h2>Moving Beyond Passive Screen Time</h2>
+      <p>Parents often worry about how much time children spend consuming digital content. Film Camp transforms passive screen time into active creativity. Instead of watching content, students create it — learning how movies are made, how stories are developed, how scenes are planned, how editing influences emotion, and how production teams collaborate.</p>
+
+      <h2>The Film Camp Philosophy</h2>
+      <p>Film Camp is built around the idea that students learn best by doing. Participants actively engage in the filmmaking process — brainstorming story ideas, writing scripts, designing storyboards, operating cameras, directing scenes, performing on camera, recording audio, editing footage, and presenting completed films.</p>
+
+      <h2>Weekend Film Classes: A Year-Round Creative Outlet</h2>
+      <p>Not every family is looking for a seasonal camp experience. Many students want opportunities to continue developing filmmaking skills throughout the year. This is where <a href="https://film.camp/film-classes/austin">Austin Film Classes</a>, <a href="https://film.camp/film-classes/los-angeles">Los Angeles Film Classes</a>, and <a href="https://film.camp/film-classes/san-francisco">San Francisco Film Classes</a> become especially valuable.</p>
+
+      <h3>Austin Film Classes</h3>
+      <p>Austin has earned a reputation as one of the most creative cities in the United States. The <a href="https://film.camp/film-classes/austin">Austin Film Classes</a> program reflects that spirit by encouraging students to explore filmmaking through hands-on projects.</p>
+
+      <h3>Los Angeles Film Classes</h3>
+      <p>Los Angeles is one of the most influential filmmaking centers in the world. The <a href="https://film.camp/film-classes/los-angeles">Los Angeles Film Classes</a> program introduces students to the creative process behind movies and television — from acting and directing to cinematography and editing.</p>
+
+      <h3>San Francisco Film Classes</h3>
+      <p>Modern filmmaking relies on both artistic vision and technical expertise. The <a href="https://film.camp/film-classes/san-francisco">San Francisco Film Classes</a> program helps students explore digital filmmaking, video production, editing software, camera techniques, and visual storytelling.</p>
+
+      <h2>Summer Camps: The Ultimate Creative Experience</h2>
+      <p>Film Camp's immersive <a href="https://film.camp/summer-camps-austin">Summer Camps</a> provide students with opportunities to dive deeply into filmmaking across Austin, Los Angeles, and San Francisco.</p>
+
+      <h3>Austin Summer Film Camp</h3>
+      <p>The <a href="https://film.camp/summer-camps-austin">Austin Summer Film Camp</a> provides students with opportunities to transform imagination into action through scriptwriting, storyboarding, acting workshops, directing exercises, camera operation, and editing projects.</p>
+
+      <h3>Los Angeles Summer Film Camp</h3>
+      <p>The <a href="https://film.camp/summer-camps-los-angeles">Los Angeles Summer Film Camp</a> immerses students in the exciting world of movie production at Solar Studios in Glendale — a working LA production space.</p>
+
+      <h3>San Francisco Summer Film Camp</h3>
+      <p>The <a href="https://film.camp/summer-camps-san-francisco">San Francisco Summer Film Camp</a> combines storytelling and technology in a collaborative environment at the Young Performers Theater in the Marina District.</p>
+
+      <h2>Thanksgiving Camps: Creative Learning During School Breaks</h2>
+      <p>Film Camp's Thanksgiving Camps help students stay engaged while exploring filmmaking during vacation periods. Available in <a href="https://film.camp/thanksgiving-camp-austin">Austin</a>, Los Angeles, and San Francisco, these programs transform school breaks into creative adventures.</p>
+
+      <h2>Building Confidence Through Creative Achievement</h2>
+      <p>Confidence grows when children accomplish meaningful goals. Film Camp provides countless opportunities for success — students learn how to share ideas, solve problems, complete projects, work with peers, and present finished work. Parents frequently report significant increases in confidence after participation.</p>
+
+      <h2>Leadership Skills That Last a Lifetime</h2>
+      <p>Filmmaking naturally creates leadership opportunities. Students learn how to organize projects, coordinate teams, make decisions, communicate effectively, and support fellow participants.</p>
+
+      <h2>Why Parents Continue Choosing Film Camp</h2>
+      <p>Families often return because they see meaningful growth in their children. Common benefits include increased confidence, better communication skills, stronger creativity, improved teamwork, leadership development, and positive social experiences.</p>
+
+      <h2>How Film Camp Supports Future Career Success</h2>
+      <p>Not every student who attends Film Camp will become a filmmaker — and that's perfectly okay. The skills students develop apply to business, marketing, education, technology, entrepreneurship, design, and communications. Creativity and communication are valuable everywhere.</p>
+
+      <h2>Frequently Asked Questions</h2>
+      <p><strong>What age groups can attend?</strong> Programs are designed for children and teens ages 7–14 with age-appropriate activities and instruction.</p>
+      <p><strong>Does my child need prior experience?</strong> No. Beginners are welcome, and instructors support students at every skill level.</p>
+      <p><strong>Will students create actual films?</strong> Yes. Students work on original productions and experience the complete filmmaking process — from script to red-carpet premiere.</p>
+      <p><strong>Is Film Camp suitable for shy children?</strong> Absolutely. Many students become more confident through creative collaboration and storytelling.</p>
+
+      <div class="mt-16 p-8 bg-ink text-bone">
+        <h3 class="text-bone mt-0" style="color: #f5f1ea;">Ready to Help Your Child Become a Creator?</h3>
+        <p style="color: #f5f1ea; opacity: .85;">Whether your child is interested in Weekend Film Classes, immersive Summer Camps, or seasonal Thanksgiving Camps, Film Camp offers a program designed to inspire creativity, build confidence, and support lifelong learning.</p>
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a href="https://film.camp/enrollment" target="_blank" class="bg-amber text-ink px-6 py-3 text-xs uppercase tracking-widest hover:bg-bone transition-colors">Enroll Today</a>
+          <a href="https://film.camp/showcase" target="_blank" class="border border-bone/30 px-6 py-3 text-xs uppercase tracking-widest hover:bg-bone hover:text-ink transition-colors" style="color: #f5f1ea;">View Showcase</a>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ============ TESTIMONIAL ============ -->
+<section class="py-24 md:py-32 bg-wine text-bone">
+  <div class="max-w-4xl mx-auto px-6 text-center reveal">
+    <div class="font-mono text-xs uppercase tracking-[0.3em] text-bone/60 mb-6">★★★★★ · Verified Parent</div>
+    <blockquote class="font-display text-3xl md:text-5xl leading-[1.15] italic">
+      "My kids loved the camp so, so much. Every day was a new adventure. This was both of their first times acting and being behind the camera. They are already asking to go back. Absolutely worth it, great instructors."
+    </blockquote>
+    <div class="mt-10 font-mono text-xs uppercase tracking-widest text-bone/70">— Pamela S., Bay Area Parent</div>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section id="contact" class="py-24 md:py-32">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="grid md:grid-cols-12 gap-12">
+      <div class="md:col-span-5 reveal">
+        <div class="font-mono text-xs uppercase tracking-[0.3em] text-ink/50 mb-4">§ 06 — Contact</div>
+        <h2 class="font-display text-5xl md:text-6xl leading-[0.95] mb-8">
+          Let's bring more<br/>stories to life.
+        </h2>
+        <p class="text-lg text-ink/70 leading-relaxed mb-10">
+          Have questions about upcoming camps, enrollment, or partnerships? We'd love to hear from you. Reach out and our team will reply within one business day.
+        </p>
+
+        <div class="space-y-5">
+          <a href="https://film.camp/contact-us" target="_blank" class="flex items-center gap-4 group">
+            <div class="w-12 h-12 bg-ink text-bone grid place-items-center font-mono text-xs">✉</div>
+            <div>
+              <div class="text-xs uppercase tracking-widest text-ink/50">Contact Form</div>
+              <div class="font-medium group-hover:text-wine transition-colors">film.camp/contact-us →</div>
+            </div>
+          </a>
+          <a href="tel:+13234715941" class="flex items-center gap-4 group">
+            <div class="w-12 h-12 bg-ink text-bone grid place-items-center font-mono text-xs">☏</div>
+            <div>
+              <div class="text-xs uppercase tracking-widest text-ink/50">Call</div>
+              <div class="font-medium group-hover:text-wine transition-colors">(323) 471-5941</div>
+            </div>
+          </a>
+          <a href="https://film.camp/enrollment" target="_blank" class="flex items-center gap-4 group">
+            <div class="w-12 h-12 bg-ink text-bone grid place-items-center font-mono text-xs">✓</div>
+            <div>
+              <div class="text-xs uppercase tracking-widest text-ink/50">Enrollment</div>
+              <div class="font-medium group-hover:text-wine transition-colors">Secure checkout via Stripe →</div>
+            </div>
+          </a>
+        </div>
+
+        <div class="mt-12 pt-8 border-t border-ink/15">
+          <div class="text-xs uppercase tracking-widest text-ink/50 mb-4">Follow the camp</div>
+          <div class="flex gap-3">
+            <a href="https://www.facebook.com/filmcamps" target="_blank" aria-label="Facebook" class="w-11 h-11 bg-ink text-bone grid place-items-center hover:bg-wine transition-colors">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M9.198 21.5h4v-8.01h3.604l.396-3.98h-4V7.5a1 1 0 0 1 1-1h3v-4h-3a5 5 0 0 0-5 5v2.01h-2l-.396 3.98h2.396v8.01Z"/></svg>
+            </a>
+            <a href="https://www.instagram.com/filmcamp.us" target="_blank" aria-label="Instagram" class="w-11 h-11 bg-ink text-bone grid place-items-center hover:bg-wine transition-colors">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+            </a>
+            <a href="https://www.youtube.com/@film_camp" target="_blank" aria-label="YouTube" class="w-11 h-11 bg-ink text-bone grid place-items-center hover:bg-wine transition-colors">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="md:col-span-7 reveal">
+        <div class="border border-ink/15 p-2 bg-ink">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3442.185173505312!2d-97.781025!3d30.3740993!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e94f7e2e2cbd941%3A0xc053482077f8eb1a!2sFilm%20Camp!5e0!3m2!1sen!2sbd!4v1780223246216!5m2!1sen!2sbd" width="100%" height="520" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+        <div class="mt-4 flex items-center justify-between font-mono text-xs uppercase tracking-widest text-ink/50">
+          <span>— HQ · Austin, Texas</span>
+          <span>N 30.3740° · W 97.7810°</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="bg-ink text-bone pt-20 pb-10">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="grid md:grid-cols-12 gap-10 pb-16 border-b border-bone/15">
+      <div class="md:col-span-4">
+        <div class="flex items-center gap-2 mb-5">
+          <div class="w-10 h-10 bg-bone text-ink grid place-items-center font-display text-2xl">F</div>
+          <span class="font-display text-3xl">Film Camp</span>
+        </div>
+        <p class="text-bone/60 text-sm leading-relaxed max-w-sm">
+          Hands-on filmmaking camps and weekend classes for kids ages 7–14. Austin · Los Angeles · San Francisco.
+        </p>
+      </div>
+
+      <div class="md:col-span-2">
+        <div class="font-mono text-xs uppercase tracking-widest text-bone/40 mb-5">Programs</div>
+        <ul class="space-y-2 text-sm">
+          <li><a href="https://film.camp/film-classes/austin" target="_blank" class="link-u">Austin Classes</a></li>
+          <li><a href="https://film.camp/film-classes/los-angeles" target="_blank" class="link-u">LA Classes</a></li>
+          <li><a href="https://film.camp/film-classes/san-francisco" target="_blank" class="link-u">SF Classes</a></li>
+          <li><a href="https://film.camp/summer-camps-austin" target="_blank" class="link-u">Summer Camps</a></li>
+          <li><a href="https://film.camp/spring-break-camp-los-angeles" target="_blank" class="link-u">Spring Break</a></li>
+        </ul>
+      </div>
+
+      <div class="md:col-span-2">
+        <div class="font-mono text-xs uppercase tracking-widest text-bone/40 mb-5">Explore</div>
+        <ul class="space-y-2 text-sm">
+          <li><a href="https://film.camp/" target="_blank" class="link-u">Home</a></li>
+          <li><a href="https://film.camp/showcase" target="_blank" class="link-u">Showcase</a></li>
+          <li><a href="https://film.camp/about" target="_blank" class="link-u">About</a></li>
+          <li><a href="https://film.camp/enrollment" target="_blank" class="link-u">Enrollment</a></li>
+          <li><a href="https://film.camp/contact-us" target="_blank" class="link-u">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="md:col-span-4">
+        <div class="font-mono text-xs uppercase tracking-widest text-bone/40 mb-5">Newsletter</div>
+        <p class="text-sm text-bone/60 mb-4">Get early access to enrollment dates and camp updates.</p>
+        <form class="flex border border-bone/20" onsubmit="event.preventDefault(); this.querySelector('input').value=''; this.querySelector('button').textContent='Subscribed ✓';">
+          <input type="email" required placeholder="your@email.com" class="flex-1 bg-transparent px-4 py-3 text-sm outline-none placeholder:text-bone/40" />
+          <button type="submit" class="bg-bone text-ink px-5 text-xs uppercase tracking-widest hover:bg-amber transition-colors">Join</button>
+        </form>
+        <div class="mt-6 flex gap-3">
+          <a href="https://www.facebook.com/filmcamps" target="_blank" class="w-10 h-10 border border-bone/20 grid place-items-center hover:bg-bone hover:text-ink transition-colors">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M9.198 21.5h4v-8.01h3.604l.396-3.98h-4V7.5a1 1 0 0 1 1-1h3v-4h-3a5 5 0 0 0-5 5v2.01h-2l-.396 3.98h2.396v8.01Z"/></svg>
+          </a>
+          <a href="https://www.instagram.com/filmcamp.us" target="_blank" class="w-10 h-10 border border-bone/20 grid place-items-center hover:bg-bone hover:text-ink transition-colors">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></svg>
+          </a>
+          <a href="https://www.youtube.com/@film_camp" target="_blank" class="w-10 h-10 border border-bone/20 grid place-items-center hover:bg-bone hover:text-ink transition-colors">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="pt-8 flex flex-col md:flex-row justify-between gap-4 text-xs text-bone/40 font-mono uppercase tracking-widest">
+      <div>© 2026 Film Camp · All Rights Reserved</div>
+      <div>Austin · Los Angeles · San Francisco</div>
+      <div>The next great storyteller could be yours.</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Reveal on scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
+
